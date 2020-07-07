@@ -68,8 +68,10 @@ print(loss.item())
 out = net(input) # 这里调用的时候会打印出我们在forword函数中打印的x的大小
 criterion = nn.MSELoss()
 loss = criterion(out, y)
+
 #新建一个优化器，SGD只需要要调整的参数和学习率
 optimizer = torch.optim.SGD(net.parameters(), lr = 0.01)
+
 # 先梯度清零(与net.zero_grad()效果一样)
 optimizer.zero_grad() 
 loss.backward()
