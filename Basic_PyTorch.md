@@ -3,6 +3,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim
 
 class Net(nn.Module):
     def __init__(self):
@@ -32,4 +33,47 @@ class Net(nn.Module):
 
 net = Net()
 print(net)
+
+
+# 返回网络的可学习参数
+for parameters in net.parameters():
+    print(parameters)
+    
+
+# 返回可学习参数及名称
+for name,parameters in net.named_parameters():
+    print(name,':',parameters.size())
+    
+ 
+# 设置函数的输入输出
+input = torch.randn(1, 1, 32, 32) # 这里的对应前面fforward的输入是32
+out = net(input)
+out.size()
+input.size()
+
+
+# 在反向传播前，要将所有的梯度清零
+net.zero_grad() 
+out.backward(torch.ones(1,10)) # 反向传播的实现是PyTorch自动实现的，我们只要调用这个函数即可  
+
+# 损失函数
+y = torch.arange(0,10).view(1,10).float()
+criterion = nn.MSELoss()
+loss = criterion(out, y)
+#loss是个scalar，我们可以直接用item获取到他的python类型的数值
+print(loss.item())
+
+
+# 优化函数
+out = net(input) # 这里调用的时候会打印出我们在forword函数中打印的x的大小
+criterion = nn.MSELoss()
+loss = criterion(out, y)
+#新建一个优化器，SGD只需要要调整的参数和学习率
+optimizer = torch.optim.SGD(net.parameters(), lr = 0.01)
+# 先梯度清零(与net.zero_grad()效果一样)
+optimizer.zero_grad() 
+loss.backward()
+
+#更新参数
+optimizer.step()
 ```
